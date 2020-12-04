@@ -1,21 +1,20 @@
 ﻿// Project PE.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
-//#include <CommCtrl.h>
 #pragma warning(disable: 4996)
 #include "framework.h"
 #include "DialogHandler.cpp"
 
 #define MAX_LOADSTRING 100
 
-// 전역 변수:
-HINSTANCE hInst;                                // 현재 인스턴스입니다.
-WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
-WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
-HWND hTree;
+HINSTANCE hInst;                             
+WCHAR szTitle[MAX_LOADSTRING];                  
+WCHAR szWindowClass[MAX_LOADSTRING];            
 FileDialog fDialog;
 TreeDialog *tDialog;
+ListView *lView;
+PEHandler pHandler;
 
-// 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
+
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -29,14 +28,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // TODO: 여기에 코드를 입력합니다.
-
-    // 전역 문자열을 초기화합니다.
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_PROJECTPE, szWindowClass, MAX_LOADSTRING);
     MyRegisterClass(hInstance);
 
-    // 애플리케이션 초기화를 수행합니다:
     if (!InitInstance (hInstance, nCmdShow))
     {
         return FALSE;
@@ -46,7 +41,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
 
-    // 기본 메시지 루프입니다:
     while (GetMessage(&msg, nullptr, 0, 0))
     {
         if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -59,13 +53,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     return (int) msg.wParam;
 }
 
-
-
-//
-//  함수: MyRegisterClass()
-//
-//  용도: 창 클래스를 등록합니다.
-//
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
     WNDCLASSEXW wcex;
@@ -87,19 +74,9 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     return RegisterClassExW(&wcex);
 }
 
-//
-//   함수: InitInstance(HINSTANCE, int)
-//
-//   용도: 인스턴스 핸들을 저장하고 주 창을 만듭니다.
-//
-//   주석:
-//
-//        이 함수를 통해 인스턴스 핸들을 전역 변수에 저장하고
-//        주 프로그램 창을 만든 다음 표시합니다.
-//
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
+   hInst = hInstance;
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW | WS_SYSMENU | WS_VISIBLE | WS_MINIMIZEBOX ,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
@@ -115,87 +92,37 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
-//
-//  함수: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  용도: 주 창의 메시지를 처리합니다.
-//
-//  WM_COMMAND  - 애플리케이션 메뉴를 처리합니다.
-//  WM_PAINT    - 주 창을 그립니다.
-//  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
-//
-//
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
 	case WM_CREATE:
 		tDialog = new TreeDialog(hWnd, hInst);
-		/*
-		TI.hParent = 0;
-		TI.hInsertAfter = TVI_LAST;
-		TI.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-		TI.item.pszText = tmp;
-		*/
-		tDialog->Insert("MungMung", 0);
-		tDialog->Insert("MyanMyan", 1);
-		tDialog->Insert("Nyan", 0);
+		lView = new ListView(hWnd, hInst);
 
-		/*
-		Post = (HTREEITEM)SendMessage(hTree, TVM_INSERTITEM, 0, (LPARAM)(LPTV_INSERTSTRUCT)&TI);
-
-		CharToWChar("A", tmp);
-		TI.hParent = Post;
-		TI.item.pszText = tmp;
-
-		Sido = (HTREEITEM)SendMessage(hTree, TVM_INSERTITEM, 0, (LPARAM)(LPTV_INSERTSTRUCT)&TI);
-
-		CharToWChar("B", tmp);
-		TI.hParent = Sido;
-		TI.item.pszText = tmp;
-
-		Gukun = (HTREEITEM)SendMessage(hTree, TVM_INSERTITEM, 0, (LPARAM)(LPTV_INSERTSTRUCT)&TI);
-
-		CharToWChar("Child 1", tmp);
-		TI.hParent = Gukun;
-		TI.item.pszText = tmp;
-
-		SendMessage(hTree, TVM_INSERTITEM, 0, (LPARAM)(LPTV_INSERTSTRUCT)&TI);
-
-		CharToWChar("Child 2", tmp);
-		TI.item.pszText = tmp;
-
-		SendMessage(hTree, TVM_INSERTITEM, 0, (LPARAM)(LPTV_INSERTSTRUCT)&TI);
-
-		CharToWChar("Child 3", tmp);
-		TI.item.pszText = tmp;
-
-		SendMessage(hTree, TVM_INSERTITEM, 0, (LPARAM)(LPTV_INSERTSTRUCT)&TI);
-
-
-
-		// 항목 삽입
-		CharToWChar("Child 4", tmp);
-		TI.hParent = 0;
-		TI.hInsertAfter = TVI_LAST;
-		TI.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-		TI.item.pszText = tmp;
-		
-
-		SendMessage(hTree, TVM_INSERTITEM, 0, (LPARAM)(LPTV_INSERTSTRUCT)&TI);
-		*/
 		break;
-
+	case WM_NOTIFY:
+		LPNMHDR hdr;
+		LPNMTREEVIEW ntv;
+		hdr = (LPNMHDR)lParam;
+		ntv = (LPNMTREEVIEW)lParam;
+		if (hdr->hwndFrom == tDialog->getHandle()) {
+			switch (hdr->code) {
+			case TVN_SELCHANGED:
+				lView->Show(tDialog->getSelectedItem(), &pHandler);
+				break;
+			}
+		}
+		break;
     case WM_COMMAND:
-        {
-            int wmId = LOWORD(wParam);
-            // 메뉴 선택을 구문 분석합니다:
-            switch (wmId)
+        {   
+            switch (LOWORD(wParam))
             {
 			case IDM_OPEN:
 				if (fDialog.open()) {
-					MessageBox(NULL, L"읽기 성공", L"파일 로드", MB_OK);
-					fDialog.read();
+					// MessageBox(NULL, L"읽기 성공", L"파일 로드", MB_OK);
+					pHandler.setData(fDialog.read());
+					pHandler.readPE();
 				}
 				break;
             case IDM_ABOUT:
@@ -218,7 +145,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-// 정보 대화 상자의 메시지 처리기입니다.
+
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     UNREFERENCED_PARAMETER(lParam);
