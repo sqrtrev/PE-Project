@@ -453,6 +453,7 @@ void PEHandler::setHeader() {
 	if (strcmp("MZ", tmp2)) {
 		MessageBox(NULL, L"Not a PE File or Error Occured", L"DOS Header", MB_OK);
 		dosHeader = {};
+		::isLoad = FALSE;
 		return;
 	}
 
