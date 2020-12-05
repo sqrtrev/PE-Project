@@ -1,2 +1,2 @@
 # PE-Project
-Written in C++ / Visual Studio
+Written in WinAPI + C++ / Visual Studio
