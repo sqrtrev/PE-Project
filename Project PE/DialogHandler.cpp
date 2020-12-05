@@ -97,12 +97,6 @@ TreeDialog::TreeDialog(HWND hWnd, HINSTANCE hInst) {
 		TVS_HASBUTTONS | TVS_LINESATROOT | TVS_HASLINES | WS_HSCROLL | WS_VSCROLL,
 		10, 10, 250, 680, hWnd, NULL, hInst, NULL);
 
-	this->Insert("IMAGE_DOS_HEADER", 0);
-	this->Insert("IMAGE_NT_HEADERS", 0);
-	this->Insert("Signature", 1, 1);
-	this->Insert("IMAGE_FILE_HEADER", 1, 1);
-	this->Insert("IMAGE_OPTIONAL_HEADER", 1);
-
 	/*
 	this->Insert("IMAGE_SECTION_HEADER .text", 0);
 	this->Insert("IMAGE_SECTION_HEADER .data", 0);
@@ -307,10 +301,6 @@ PEHandler::PEHandler() {
 	imageNTHeaders = {};
 	sectionHeader = {};
 	importSection = {};
-	importDescriptor = {};
-	thunkData = {};
-	thunk = NULL;
-	rawOffset = NULL;
 }
 
 PEHandler::~PEHandler() {
@@ -322,8 +312,14 @@ void PEHandler::setData(unsigned char* data) {
 }
 
 void PEHandler::readPE(ListView* lList, TreeDialog* tDialog) {
+	TreeView_DeleteAllItems(tDialog->getHandle());
 	this->setHeader();
 	if (::isLoad) {
+		tDialog->Insert("IMAGE_DOS_HEADER", 0);
+		tDialog->Insert("IMAGE_NT_HEADERS", 0);
+		tDialog->Insert("Signature", 1, 1);
+		tDialog->Insert("IMAGE_FILE_HEADER", 1, 1);
+		tDialog->Insert("IMAGE_OPTIONAL_HEADER", 1);
 		for (int i = 0; i < imageNTHeaders->FileHeader.NumberOfSections; i++) {
 			string tmp = (char*)sectionHeader[i].Name;
 			tDialog->Insert("Section "+tmp, 0);
@@ -480,11 +476,6 @@ void PEHandler::setHeader() {
 		this->machine = "x64";
 	else
 		this->machine = "Unknown";
-
-	if (this->machine == "x86") {
-		rawOffset = (DWORD)(data + importSection->PointerToRawData);
-		importDescriptor = (PIMAGE_IMPORT_DESCRIPTOR)(rawOffset + (imageNTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress - importSection->VirtualAddress));
-	}
 
 	::isLoad = TRUE;
 }

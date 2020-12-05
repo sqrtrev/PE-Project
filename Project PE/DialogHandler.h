@@ -71,10 +71,6 @@ private:
 	PIMAGE_NT_HEADERS imageNTHeaders;
 	PIMAGE_SECTION_HEADER sectionHeader;
 	PIMAGE_SECTION_HEADER importSection;
-	IMAGE_IMPORT_DESCRIPTOR* importDescriptor;
-	PIMAGE_THUNK_DATA thunkData;
-	DWORD thunk;
-	DWORD rawOffset;
 	unsigned char* data;
 	string machine;
 	
