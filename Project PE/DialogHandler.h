@@ -34,10 +34,9 @@ private:
 	HWND hTree;
 	TVINSERTSTRUCT TI;
 	HTREEITEM tParent;
-
-	void Insert(const char* title, bool is_sub, bool cond = 0);
 public:
 	TreeDialog(HWND hWnd, HINSTANCE hInst);
+	void Insert(const string title, bool is_sub, bool cond = 0);
 	HWND getHandle();
 	const char* getSelectedItem();
 };
@@ -52,7 +51,7 @@ private:
 	unsigned short idx;
 	map<string, unsigned short> li_idx;
 	string before;
-	map<string, string[30]> dataset;
+	map<string, string[100]> dataset;
 
 	void Insert(const char* title, unsigned int cx);
 	void setDataset();
@@ -61,6 +60,7 @@ public:
 	void Add(const string = "main");
 	void Set(const string content, unsigned short row, unsigned short col);
 	void Show(const string key, PEHandler* pHandler);
+	void setSectionDataset(const string key);
 };
 
 // ===================== PE Handler =====================
@@ -76,17 +76,18 @@ private:
 	DWORD thunk;
 	DWORD rawOffset;
 	unsigned char* data;
+	string machine;
 	
 	void setHeader();
 	void showDosHeader(ListView* lList);
 	void showSignature(ListView* lList);
 	void showImageHeader(ListView* lList);
 	void showOptionalHeader(ListView* lList);
-	DWORD RVAtoRAW(DWORD RVA);
+	void showSectionHeader(ListView* lList, const string key);
 public:
 	PEHandler();
 	~PEHandler();
 	void setData(unsigned char* data);
-	void readPE();
+	void readPE(ListView* lList, TreeDialog* tDialog);
 	void Show(const string key, ListView* lList);
 };

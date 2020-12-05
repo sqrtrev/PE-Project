@@ -73,9 +73,9 @@ unsigned char* FileDialog::read() {
 	return data;
 }
 
-void TreeDialog::Insert(const char* title, bool is_sub, bool cond ) {
+void TreeDialog::Insert(string title, bool is_sub, bool cond ) {
 	wchar_t tmp[256];
-	CharToWChar(title, tmp);
+	CharToWChar(title.c_str(), tmp);
 
 	if (is_sub) {
 		TI.hParent = tParent;
@@ -102,6 +102,8 @@ TreeDialog::TreeDialog(HWND hWnd, HINSTANCE hInst) {
 	this->Insert("Signature", 1, 1);
 	this->Insert("IMAGE_FILE_HEADER", 1, 1);
 	this->Insert("IMAGE_OPTIONAL_HEADER", 1);
+
+	/*
 	this->Insert("IMAGE_SECTION_HEADER .text", 0);
 	this->Insert("IMAGE_SECTION_HEADER .data", 0);
 	this->Insert("IMAGE_SECTION_HEADER .rsrc", 0);
@@ -116,6 +118,7 @@ TreeDialog::TreeDialog(HWND hWnd, HINSTANCE hInst) {
 	this->Insert("IMPORT Name Table", 1, 1);
 	this->Insert("IMPORT Hints/Names & DLL Name", 1);
 	this->Insert("SECTION .data", 0);
+	*/
 }
 
 HWND TreeDialog::getHandle() {
@@ -214,10 +217,6 @@ void ListView::Insert(const char* title, unsigned int cx) {
 
 void ListView::setDataset() {
 	unsigned short idx = 0;
-	li_idx["IMAGE_DOS_HEADER"] = 17;
-	li_idx["Signature"] = 1;
-	li_idx["IMAGE_FILE_HEADER"] = 7;
-	li_idx["IMAGE_OPTIONAL_HEADER"] = 29;
 
 	dataset["IMAGE_DOS_HEADER"][idx++] = "Magic Number";
 	dataset["IMAGE_DOS_HEADER"][idx++] = "Bytes on last page of file";
@@ -236,9 +235,11 @@ void ListView::setDataset() {
 	dataset["IMAGE_DOS_HEADER"][idx++] = "OEM identifier (for e_oeminfo)";
 	dataset["IMAGE_DOS_HEADER"][idx++] = "OEM information; e_oemid specific";
 	dataset["IMAGE_DOS_HEADER"][idx++] = "File address of new exe header";
+	li_idx["IMAGE_DOS_HEADER"] = idx;
 	idx = 0;
 
 	dataset["Signature"][idx++] = "Signature";
+	li_idx["Signature"] = idx;
 	idx = 0;
 
 
@@ -249,38 +250,56 @@ void ListView::setDataset() {
 	dataset["IMAGE_FILE_HEADER"][idx++] = "Number of Symbols";
 	dataset["IMAGE_FILE_HEADER"][idx++] = "Size of Optional Header";
 	dataset["IMAGE_FILE_HEADER"][idx++] = "Characteristics";
+	li_idx["IMAGE_FILE_HEADER"] = idx;
 	idx = 0;
 
 	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Magic";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "MagorLinkerVersion ";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "MinorLinkerVersion ";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "SizeOfCode";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "SizeOfInitializedData";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "SizeOfUninitializedData";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "AddressOfEntryPoint";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "BaseOfCode";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Magor Linker Version ";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Minor Linker Version ";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Size Of Code";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Size Of InitializedData";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Size Of Uninitialized Data";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Address Of EntryPoint";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Base Of Code";
 	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "ImageBase";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "SectionAlignment";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Section Alignment";
 	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "FileAlignment";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "MajorOperatingSystemVersion";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "MinorOperatingSystemVersion";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "MajorImageVersion";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "MinorImageVersion";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "MajorSubsystemVersion";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "MinorSubsystemVersion";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Win32VersionValue";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "SizeOfImage";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "SizeOfHeaders";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Major Operating System Version";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Minor Operating System Version";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Major Image Version";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Minor Image Version";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Major Subsystem Version";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Minor Subsystem Version";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Win32 Version Value";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Size Of Image";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Size Of Headers";
 	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "CheckSum";
 	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Subsystem ";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "DllCharacteristics ";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "SizeOfStackReserve ";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "SizeOfStackCommit ";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "SizeOfHeapReserve ";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "SizeOfHeapCommit";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "LoaderFlags ";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "NumberOfRvaAndSizes ";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Dll Characteristics ";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Size Of Stack Reserve ";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Size Of Stack Commit ";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Size Of Heap Reserve ";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Size Of Heap Commit";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Loader Flags ";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Number Of Rva And Sizes ";
+	li_idx["IMAGE_OPTIONAL_HEADER"] = idx;
 	idx = 0;
+
+}
+
+void ListView::setSectionDataset(const string key) {
+	unsigned short idx = 0;
+
+	dataset[key][idx++] = "Virtual Size";
+	dataset[key][idx++] = "Virtual Address";
+	dataset[key][idx++] = "Size Of Raw Data";
+	dataset[key][idx++] = "Pointer To Raw Data";
+	dataset[key][idx++] = "Pointer To Relocations";
+	dataset[key][idx++] = "Pointer To Line Numbers";
+	dataset[key][idx++] = "Number Of Relocations";
+	dataset[key][idx++] = "Number Of Line Numbers";
+	dataset[key][idx++] = "Characteristics";
+	li_idx[key] = idx;
 }
 
 PEHandler::PEHandler() {
@@ -302,8 +321,16 @@ void PEHandler::setData(unsigned char* data) {
 	this->data = data;
 }
 
-void PEHandler::readPE() {
+void PEHandler::readPE(ListView* lList, TreeDialog* tDialog) {
 	this->setHeader();
+	if (::isLoad) {
+		for (int i = 0; i < imageNTHeaders->FileHeader.NumberOfSections; i++) {
+			string tmp = (char*)sectionHeader[i].Name;
+			tDialog->Insert("Section "+tmp, 0);
+			lList->setSectionDataset("Section " + tmp);
+			lList->Add("Section " + tmp);
+		}
+	}
 }
 
 void PEHandler::Show(const string key, ListView* lList) {
@@ -320,6 +347,9 @@ void PEHandler::Show(const string key, ListView* lList) {
 	}
 	else if (key == "IMAGE_OPTIONAL_HEADER") {
 		showOptionalHeader(lList);
+	}
+	else if (key.find("Section") != string::npos) {
+		showSectionHeader(lList, key);
 	}
 }
 
@@ -353,12 +383,7 @@ void PEHandler::showImageHeader(ListView * lList) {
 	unsigned short idx = 0;
 	const string machine = toHex(imageNTHeaders->FileHeader.Machine);
 
-	if(machine == "14c")
-		lList->Set("x32", idx++, 0);
-	else if(machine == "2000" or machine == "8664")
-		lList->Set("x64", idx++, 0);
-	else
-		lList->Set("Unknown", idx++, 0);
+	lList->Set(this->machine, idx++, 0);
 	lList->Set(toHex(imageNTHeaders->FileHeader.NumberOfSections), idx++, 0);
 	lList->Set(toHex(imageNTHeaders->FileHeader.TimeDateStamp), idx++, 0);
 	lList->Set(toHex(imageNTHeaders->FileHeader.PointerToSymbolTable), idx++, 0);
@@ -401,15 +426,23 @@ void PEHandler::showOptionalHeader(ListView * lList) {
 	lList->Set(toHex(imageNTHeaders->OptionalHeader.NumberOfRvaAndSizes), idx, 0);
 }
 
-DWORD PEHandler::RVAtoRAW(DWORD RVA) {
-	int i;
-	DWORD raw = 0;
-	for (i = 0; i < imageNTHeaders->FileHeader.NumberOfSections - 1; i++) {
-		if (RVA >= sectionHeader[i].VirtualAddress && RVA <= sectionHeader[i + 1].VirtualAddress) {
-			raw = RVA - sectionHeader[i].VirtualAddress + sectionHeader[i].PointerToRawData;
+void PEHandler::showSectionHeader(ListView * lList, const string key) {
+	unsigned short idx = 0;
+
+	for (int i = 0; i < imageNTHeaders->FileHeader.NumberOfSections; i++) {
+		if (key.find((char*)sectionHeader[i].Name) != string::npos) {
+			lList->Set(toHex(sectionHeader[i].Misc.VirtualSize), idx++, 0);
+			lList->Set(toHex(sectionHeader[i].VirtualAddress), idx++, 0);
+			lList->Set(toHex(sectionHeader[i].SizeOfRawData), idx++, 0);
+			lList->Set(toHex(sectionHeader[i].PointerToRawData), idx++, 0);
+			lList->Set(toHex(sectionHeader[i].PointerToRelocations), idx++, 0);
+			lList->Set(toHex(sectionHeader[i].PointerToLinenumbers), idx++, 0);
+			lList->Set(toHex(sectionHeader[i].NumberOfRelocations), idx++, 0);
+			lList->Set(toHex(sectionHeader[i].NumberOfLinenumbers), idx++, 0);
+			lList->Set(toHex(sectionHeader[i].Characteristics), idx++, 0);
+			break;
 		}
 	}
-	return raw;
 }
 
 void PEHandler::setHeader() {
@@ -428,11 +461,30 @@ void PEHandler::setHeader() {
 	}
 
 	imageNTHeaders = (PIMAGE_NT_HEADERS)(data + dosHeader->e_lfanew);
+	sectionHeader = (PIMAGE_SECTION_HEADER)malloc(sizeof(IMAGE_SECTION_HEADER) * imageNTHeaders->FileHeader.NumberOfSections);
+	DWORD sectionLocation = (DWORD)imageNTHeaders + sizeof(DWORD) + (DWORD)(sizeof(IMAGE_FILE_HEADER)) + (DWORD)imageNTHeaders->FileHeader.SizeOfOptionalHeader;
+	DWORD importDirectoryRVA = imageNTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress;
 
-	/*
-	rawOffset = (DWORD)data + importSection->PointerToRawData;
-	importDescriptor = (PIMAGE_IMPORT_DESCRIPTOR)(rawOffset + (imageNTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress - importSection->VirtualAddress));
-	*/
+	for (int i = 0; i < imageNTHeaders->FileHeader.NumberOfSections; i++) {
+		sectionHeader[i] = *(PIMAGE_SECTION_HEADER)sectionLocation;
+		if (importDirectoryRVA >= sectionHeader[i].VirtualAddress && importDirectoryRVA < sectionHeader[i].VirtualAddress + sectionHeader[i].Misc.VirtualSize) {
+			importSection = &sectionHeader[i];
+		}
+		sectionLocation += sizeof(IMAGE_SECTION_HEADER);
+	}
+
+	const string machine = toHex(imageNTHeaders->FileHeader.Machine);
+	if (machine == "14c")
+		this->machine = "x86";
+	else if (machine == "2000" or machine == "8664")
+		this->machine = "x64";
+	else
+		this->machine = "Unknown";
+
+	if (this->machine == "x86") {
+		rawOffset = (DWORD)(data + importSection->PointerToRawData);
+		importDescriptor = (PIMAGE_IMPORT_DESCRIPTOR)(rawOffset + (imageNTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress - importSection->VirtualAddress));
+	}
 
 	::isLoad = TRUE;
 }

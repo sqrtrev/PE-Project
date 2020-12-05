@@ -11,7 +11,7 @@ WCHAR szTitle[MAX_LOADSTRING];
 WCHAR szWindowClass[MAX_LOADSTRING];            
 FileDialog fDialog;
 TreeDialog *tDialog;
-ListView *lView;
+ListView *lList;
 PEHandler pHandler;
 
 
@@ -98,7 +98,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
 	case WM_CREATE:
 		tDialog = new TreeDialog(hWnd, hInst);
-		lView = new ListView(hWnd, hInst);
+		lList = new ListView(hWnd, hInst);
 
 		break;
 	case WM_NOTIFY:
@@ -109,7 +109,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (hdr->hwndFrom == tDialog->getHandle()) {
 			switch (hdr->code) {
 			case TVN_SELCHANGED:
-				lView->Show(tDialog->getSelectedItem(), &pHandler);
+				lList->Show(tDialog->getSelectedItem(), &pHandler);
 				break;
 			}
 		}
@@ -122,7 +122,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if (fDialog.open()) {
 					// MessageBox(NULL, L"읽기 성공", L"파일 로드", MB_OK);
 					pHandler.setData(fDialog.read());
-					pHandler.readPE();
+					pHandler.readPE(lList, tDialog);
 				}
 				break;
             case IDM_ABOUT:
