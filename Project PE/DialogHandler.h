@@ -10,7 +10,6 @@ void CharToWChar(const char*, wchar_t[]);
 void WCharToChar(const wchar_t*, char[]);
 class FileDialog;
 class ListView;
-class ListView;
 class PEHandler;
 
 // ===================== FileDialog =====================
