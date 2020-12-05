@@ -248,7 +248,7 @@ void ListView::setDataset() {
 	idx = 0;
 
 	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Magic";
-	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Magor Linker Version ";
+	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Major Linker Version ";
 	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Minor Linker Version ";
 	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Size Of Code";
 	dataset["IMAGE_OPTIONAL_HEADER"][idx++] = "Size Of InitializedData";
