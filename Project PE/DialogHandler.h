@@ -9,6 +9,7 @@ using namespace std;
 void CharToWChar(const char*, wchar_t[]);
 void WCharToChar(const wchar_t*, char[]);
 class FileDialog;
+class TreeDialog;
 class ListView;
 class PEHandler;
 
